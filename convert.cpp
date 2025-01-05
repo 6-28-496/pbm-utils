@@ -25,6 +25,9 @@ using namespace std;
 void display_help(void);
 vector<vector<int> > input_image(char *filename);
 void invert_image(vector<vector<int> > &image);
+void mirror_image_horizontally(vector<vector<int> > &image);
+void mirror_image_vertically(vector<vector<int> > &image);
+void mirror_image_hv(vector<vector<int> > &image);
 void output_image(char *filename, vector<vector<int> > &image);
 
 int main(int argc, char *argv[]) {
@@ -45,8 +48,12 @@ int main(int argc, char *argv[]) {
             }
             break;
         case 3:
-            if (!strcmp(argv[1], "-i")) {
-                // inversion
+            if (strcmp(argv[1], "-i") && strcmp(argv[1], "-mh")
+            && strcmp(argv[1], "-mv") && strcmp(argv[1], "-mhv")) {
+                cout << "Parameter " << argv[1] << " not recognised.\n";
+                display_help();
+                return 1;
+            } else {
                 vector<vector<int> > image;
                 try {
                     image = input_image(argv[2]);
@@ -54,18 +61,24 @@ int main(int argc, char *argv[]) {
                     cerr << "Runtime error: " << e.what() << '\n';
                     return 1;
                 }
-                invert_image(image);
+
+                if (!strcmp(argv[1], "-i")) {
+                    invert_image(image);
+                } else if (!strcmp(argv[1], "-mh")) {
+                    mirror_image_horizontally(image);
+                } else if (!strcmp(argv[1], "-mv")) {
+                    mirror_image_vertically(image);
+                } else if (!strcmp(argv[1], "-mhv")) {
+                    mirror_image_hv(image);
+                }
+
                 try {
                     output_image(argv[2], image);
                 } catch (runtime_error& e) {
                     cerr << "Runtime error: " << e.what() << '\n';
                 }
 
-                cout << "File inverted\n";
-            } else {
-                cout << "Parameter " << argv[1] << " not recognised.\n";
-                display_help();
-                return 1;
+                cout << "File transformed with operation " << argv[1] << '\n';
             }
             break;
         default:
@@ -163,6 +176,37 @@ void invert_image(vector<vector<int> > &image) {
             }
         }
     }
+}
+
+void mirror_image_horizontally(vector<vector<int> > &image) {
+    int width = image[0].size(), height = image.size();
+    int temp;
+
+    for (int j = 0; j < height; j++) {
+        for (int i = 0; i < int(width/2); i++) {
+            temp = image[j][i];
+            image[j][i] = image[j][(width-i)-1];
+            image[j][(width-i)-1] = temp;
+        }
+    }
+}
+
+void mirror_image_vertically(vector<vector<int> > &image) {
+    int width = image[0].size(), height = image.size();
+    int temp;
+
+    for (int j = 0; j < int(height/2); j++) {
+        for (int i = 0; i < width; i++) {
+            temp = image[j][i];
+            image[j][i] = image[(height-j)-1][i];
+            image[(height-j)-1][i] = temp;
+        }
+    }
+}
+
+void mirror_image_hv(vector<vector<int> > &image) {
+    mirror_image_horizontally(image);
+    mirror_image_vertically(image);
 }
 
 void output_image(char *filename, vector<vector<int> > &image) {
