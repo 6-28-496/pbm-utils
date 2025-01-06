@@ -23,12 +23,12 @@ For more info, see: https://en.wikipedia.org/wiki/Netpbm#File_formats
 using namespace std;
 
 void display_help(void);
-vector<vector<int> > input_image(char *filename);
+vector<vector<int> > input_image(string &filename);
 void invert_image(vector<vector<int> > &image);
 void mirror_image_horizontally(vector<vector<int> > &image);
 void mirror_image_vertically(vector<vector<int> > &image);
 void mirror_image_hv(vector<vector<int> > &image);
-void output_image(char *filename, vector<vector<int> > &image);
+void output_image(string &filename, vector<vector<int> > &image);
 
 int main(int argc, char *argv[]) {
     switch(argc) {
@@ -55,8 +55,9 @@ int main(int argc, char *argv[]) {
                 return 1;
             } else {
                 vector<vector<int> > image;
+                string filename = argv[2];
                 try {
-                    image = input_image(argv[2]);
+                    image = input_image(filename);
                 } catch (runtime_error& e) {
                     cerr << "Runtime error: " << e.what() << '\n';
                     return 1;
@@ -73,7 +74,7 @@ int main(int argc, char *argv[]) {
                 }
 
                 try {
-                    output_image(argv[2], image);
+                    output_image(filename, image);
                 } catch (runtime_error& e) {
                     cerr << "Runtime error: " << e.what() << '\n';
                 }
@@ -90,16 +91,21 @@ int main(int argc, char *argv[]) {
 }
 
 void display_help(void) {
-    cout << "Typical syntax is: \n";
-    cout << "\t./convert // displays a help message like this one\n";
-    cout << "\t./convert -h // also displays a help message like this one\n";
-    cout << "\t./convert -i image.pbm // inverts image's colours\n";
-    cout << "\t./convert -mh image.pbm // mirrors image horizontally\n";
-    cout << "\t./convert -mv image.pbm // mirrors image vertically\n";
-    cout << "\t./convert -mhv image.pbm // mirrors image horizontally and vertically\n";
+    cout << "Typical syntax is: \n"
+        << "\t./convert // displays a help message like this one\n"
+        << "\t./convert -h // also displays a help message like this one\n"
+        << "\t./convert -i image.pbm // inverts image's colours\n"
+        << "\t./convert -mh image.pbm // mirrors image horizontally\n"
+        << "\t./convert -mv image.pbm // mirrors image vertically\n"
+        << "\t./convert -mhv image.pbm // mirrors image horizontally and vertically\n";
 }
 
-vector<vector<int> > input_image(char *filename) {
+vector<vector<int> > input_image(string &filename) {
+    string extension = string(filename, filename.length()-4);
+    if (extension != ".pbm") {
+        throw runtime_error("filename provided " + extension + " not currently supported");
+    }
+    
     ifstream file_reader;
     file_reader.open(filename);
 
@@ -209,7 +215,7 @@ void mirror_image_hv(vector<vector<int> > &image) {
     mirror_image_vertically(image);
 }
 
-void output_image(char *filename, vector<vector<int> > &image) {
+void output_image(string &filename, vector<vector<int> > &image) {
     ofstream file_writer;
     file_writer.open(filename);
     if (!file_writer) {
