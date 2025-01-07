@@ -2,86 +2,51 @@
     Header file to provide class definitions for convert.cpp
 */
 
+#ifndef PBM_CLASSES_H
+#define PBM_CLASSES_H
+
+#include <vector>
+
+using namespace std;
+
 class Pixel {
 public:
-    virtual void invert() =0;
-};
+    Pixel();
+    Pixel(const vector<int>& pixel_colors);
 
-class Black_white_pixel : public Pixel {
+    vector<int> get_color_channels() const;
+    void invert(int max_color);
 private:
-    bool is_black;
-public:
-    Black_white_pixel() {
-        is_black = false;
-    }
-    
-    Black_white_pixel(bool is_pixel_black) {
-        is_black = is_pixel_black;
-    }
-
-    bool is_pixel_black() {
-        return is_black;
-    }
-    
-    void invert() {
-        is_black = !is_black;
-    }
+    vector<int> color_channels;
 };
 
-class Greyscale_pixel : public Pixel {
+enum class Rgb {
+    red, green, blue
+};
+
+enum class File_format {
+    p1, p2, p3, p4, p5, p6
+};
+
+class Image {
+public:
+    Image();  
+    Image(vector<string> &file_header, File_format file_format,
+          int image_width, int image_height, int image_max_color);
+    Image(vector<vector<Pixel> > &image_pixels, vector<string> &file_header,
+          File_format file_format, int image_width, int image_height, int image_max_color);
+
+    vector<vector<Pixel> > get_pixels() const;
+    bool add_pixel_row(vector<Pixel> &pixel_row);
+    void invert();
+    void mirror_image_horizontally();
+    void mirror_image_vertically();
+    void mirror_image_hv();
 private:
-    int intensity;
-    static int max_intensity;
-public:
-    Greyscale_pixel() {
-        intensity = 0;
-    }
-
-    Greyscale_pixel(int pixel_intensity) {
-        intensity = pixel_intensity;
-    }
-
-    int get_intensity() {
-        return intensity;
-    }
-
-    void invert() {
-        intensity = max_intensity - intensity;
-    }
+    vector<vector<Pixel> > pixels;
+    vector<string> header;
+    File_format format;
+    int width, height, max_color;
 };
 
-class Color_pixel : public Pixel {
-private:
-    int red, green, blue;
-    static int max_color;
-public:
-    Color_pixel() {
-        red = max_color;
-        green = max_color;
-        blue = max_color;
-    }
-
-    Color_pixel(int red_color, int green_color, int blue_color) {
-        red = red_color;
-        green = green_color;
-        blue = blue_color;
-    }
-
-    int get_red() {
-        return red;
-    }
-
-    int get_green() {
-        return green;
-    }
-
-    int get_blue() {
-        return blue;
-    }
-
-    void invert() {
-        red = max_color - red;
-        green = max_color - green;
-        blue = max_color - blue;
-    }
-};
+#endif

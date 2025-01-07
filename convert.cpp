@@ -23,12 +23,12 @@ For more info, see: https://en.wikipedia.org/wiki/Netpbm#File_formats
 using namespace std;
 
 void display_help(void);
-vector<vector<int> > input_image(string &filename);
-void invert_image(vector<vector<int> > &image);
-void mirror_image_horizontally(vector<vector<int> > &image);
-void mirror_image_vertically(vector<vector<int> > &image);
-void mirror_image_hv(vector<vector<int> > &image);
-void output_image(string &filename, vector<vector<int> > &image);
+vector<vector<int> > input_image(string& filename);
+void invert_image(vector<vector<int> >& image);
+void mirror_image_horizontally(vector<vector<int> >& image);
+void mirror_image_vertically(vector<vector<int> >& image);
+void mirror_image_hv(vector<vector<int> >& image);
+void output_image(string& filename, vector<vector<int> >& image);
 
 int main(int argc, char *argv[]) {
     switch(argc) {
@@ -92,15 +92,15 @@ int main(int argc, char *argv[]) {
 
 void display_help(void) {
     cout << "Typical syntax is: \n"
-        << "\t./convert // displays a help message like this one\n"
-        << "\t./convert -h // also displays a help message like this one\n"
-        << "\t./convert -i image.pbm // inverts image's colours\n"
-        << "\t./convert -mh image.pbm // mirrors image horizontally\n"
-        << "\t./convert -mv image.pbm // mirrors image vertically\n"
-        << "\t./convert -mhv image.pbm // mirrors image horizontally and vertically\n";
+         << "\t./convert // displays a help message like this one\n"
+         << "\t./convert -h // also displays a help message like this one\n"
+         << "\t./convert -i image.pbm // inverts image's colours\n"
+         << "\t./convert -mh image.pbm // mirrors image horizontally\n"
+         << "\t./convert -mv image.pbm // mirrors image vertically\n"
+         << "\t./convert -mhv image.pbm // mirrors image horizontally and vertically\n";
 }
 
-vector<vector<int> > input_image(string &filename) {
+vector<vector<int> > input_image(string& filename) {
     string extension = string(filename, filename.length()-4);
     if (extension != ".pbm") {
         throw runtime_error("filename provided " + extension + " not currently supported");
@@ -172,50 +172,50 @@ vector<vector<int> > input_image(string &filename) {
     return image;
 }
 
-void invert_image(vector<vector<int> > &image) {
-    for (int j = 0; j < image.size(); j++) {
-        for (int i = 0; i < image[j].size(); i++) {
-            if (image[j][i] == 0) {
-                image[j][i] = 1;
+void invert_image(vector<vector<int> >& image) {
+    for (int i = 0; i < image.size(); i++) {
+        for (int j = 0; j < image[j].size(); j++) {
+            if (image[i][j] == 0) {
+                image[i][j] = 1;
             } else if (image[j][i] == 1) {
-                image[j][i] = 0;
+                image[i][j] = 0;
             }
         }
     }
 }
 
-void mirror_image_horizontally(vector<vector<int> > &image) {
+void mirror_image_horizontally(vector<vector<int> >& image) {
     int width = image[0].size(), height = image.size();
     int temp;
 
-    for (int j = 0; j < height; j++) {
-        for (int i = 0; i < int(width/2); i++) {
-            temp = image[j][i];
-            image[j][i] = image[j][(width-i)-1];
-            image[j][(width-i)-1] = temp;
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < int(width/2); j++) {
+            temp = image[i][j];
+            image[i][j] = image[i][(width-j)-1];
+            image[i][(width-j)-1] = temp;
         }
     }
 }
 
-void mirror_image_vertically(vector<vector<int> > &image) {
+void mirror_image_vertically(vector<vector<int> >& image) {
     int width = image[0].size(), height = image.size();
     int temp;
 
-    for (int j = 0; j < int(height/2); j++) {
-        for (int i = 0; i < width; i++) {
-            temp = image[j][i];
-            image[j][i] = image[(height-j)-1][i];
-            image[(height-j)-1][i] = temp;
+    for (int i = 0; i < int(height/2); i++) {
+        for (int j = 0; j < width; j++) {
+            temp = image[i][j];
+            image[i][j] = image[(height-i)-1][j];
+            image[(height-i)-1][j] = temp;
         }
     }
 }
 
-void mirror_image_hv(vector<vector<int> > &image) {
+void mirror_image_hv(vector<vector<int> >& image) {
     mirror_image_horizontally(image);
     mirror_image_vertically(image);
 }
 
-void output_image(string &filename, vector<vector<int> > &image) {
+void output_image(string& filename, vector<vector<int> >& image) {
     ofstream file_writer;
     file_writer.open(filename);
     if (!file_writer) {
@@ -226,9 +226,9 @@ void output_image(string &filename, vector<vector<int> > &image) {
 
     int width = image[0].size(), height = image.size();
     file_writer << width << ' ' << height << endl;
-    for (int j = 0; j < height; j++) {
-        for (int i = 0; i < width; i++) {
-            file_writer << image[j][i] << ' ';
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            file_writer << image[i][j] << ' ';
         }
         file_writer << '\n';
     }
