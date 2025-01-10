@@ -2,3 +2,4 @@
 /.vscode/
 /convert.dSYM/
 .DS_Store
+*.gch

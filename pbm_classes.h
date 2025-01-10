@@ -37,6 +37,11 @@ public:
           File_format file_format, int image_width, int image_height, int image_max_color);
 
     vector<vector<Pixel> > get_pixels() const;
+    vector<string> get_header() const;
+    int get_width() const;
+    int get_height() const;
+    int get_max_color() const;
+    
     bool add_pixel_row(vector<Pixel> &pixel_row);
     void invert();
     void mirror_image_horizontally();

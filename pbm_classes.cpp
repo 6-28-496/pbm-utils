@@ -1,4 +1,5 @@
 #include "pbm_classes.h"
+
 #include <vector>
 
 using namespace std;
@@ -23,19 +24,35 @@ Image::Image() : pixels{}, header{}, format(File_format::p1), width(1),
 Image::Image(vector<string> &file_header, File_format file_format,
              int image_width, int image_height, int image_max_color)
              : pixels{}, header(file_header), format(file_format),
-             width(image_width), height(image_height), max_color(image_max_color) { }
+               width(image_width), height(image_height), max_color(image_max_color) { }
 
 Image::Image(vector<vector<Pixel> > &image_pixels, vector<string> &file_header,
           File_format file_format, int image_width, int image_height, int image_max_color)
           : pixels(image_pixels), header(file_header), format(file_format),
-          width(image_width), height(image_height), max_color(image_max_color) { }
+            width(image_width), height(image_height), max_color(image_max_color) { }
 
 vector<vector<Pixel> > Image::get_pixels() const {
     return pixels;
 }
 
+vector<string> Image::get_header() const {
+    return header;
+}
+
+int Image::get_width() const {
+    return width;
+}
+
+int Image::get_height() const {
+    return height;
+}
+
+int Image::get_max_color() const {
+    return max_color;
+}
+
 bool Image::add_pixel_row(vector<Pixel> &pixel_row) {
-    if(pixels.size() < height && pixel_row.size() < width) {
+   if(pixels.size() < height && pixel_row.size() == width) {
         pixels.push_back(pixel_row);
         return true;
     }
